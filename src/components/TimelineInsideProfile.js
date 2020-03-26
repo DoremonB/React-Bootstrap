@@ -8,13 +8,15 @@ import BreadcrumbComponent from './BreadcrumbComponent'
 import ButtonComponent from './ButtonComponent'
 import ButtonGroupComponent from './ButtonGroupComponent'
 import CardComponent from './CardComponent'
-
+import Comment from './Comment'
+import MyFilteringComponent from './MyFilteringComponent'
 import nature from '../images/nature.jpeg'
 
 
 class Timeline extends React.Component {
   constructor(props){
     super(props)
+    console.log(props)
     this.state={
       comment_content:'',
       show:false
@@ -24,7 +26,7 @@ class Timeline extends React.Component {
   }
   handleComment(e){
     this.setState({
-      comment_content:e.target.value,
+      comment_content:"You commented "+e.target.value,
       show:true
     })
     console.log(e.target.value)
@@ -33,29 +35,17 @@ class Timeline extends React.Component {
   render() {
     return (
       <>
-{this.state.show && 
-<div
-style={{
-  position:'fixed',
-  top:0,
-  width:'100%'
-}}
->
-<Alert dismissible variant="success" onClose={()=>{ this.setState({ show:false }) }}>
-    You Added a Comment !
-    <Alert.Link href="#">an example link</Alert.Link>. Give it a click if you
-    like.
-</Alert>
-</div>      
-}
+      
+
     
         <Container >
-            
+        
 <Form  className="text-left">
+
 <Form.Group  controlId="exampleForm.ControlTextarea1">
     
     <Form.Control  placeholder="What's on your mind" as="textarea" rows="3" />
-    <Button className="justify-content-end mt-2" variant="primary" type="submit">
+    <Button onClick={this.props.parent.showModalFun} className="justify-content-end mt-2" variant="primary" >
         Submit
     </Button>
 </Form.Group>                
@@ -91,7 +81,7 @@ style={{
                     Some quick example text to build on the card title and make up the bulk of
                     the card's content.
                   </Card.Text>
-              <Button  variant="primary">Likes <Badge variant="light">{num*num}</Badge></Button>
+              <Button value="Liked" onClick={this.props.parent.toggleShow} variant="primary">Likes <Badge variant="light">{num*num}</Badge></Button>
               <Button className="ml-1" variant="primary">Comments <Badge variant="light">{num+1}</Badge></Button>
                 </Card.Body>
 <Accordion>
@@ -103,19 +93,27 @@ style={{
   </Card.Header>
   <Accordion.Collapse eventKey="0">
       <>
-      <h2>comment number c</h2>
-      <h2>comment number c</h2>
-      <h2>comment number c</h2>
+      <div>
+        {[9,10,11].map((n)=>{
+          return (
+            <>
+              <Comment content={n} />
+            </>
+            
+          )
+        })}
+      </div>
       <div>
           <InputGroup className="mb-3 p-3">
               <FormControl
+                
                 onChange={this.handleComment}
                 placeholder="Add Comment"
                 aria-label="Recipient's username"
                 aria-describedby="basic-addon2"
               />
               <InputGroup.Append>
-                <Button  variant="outline-info">Comment</Button>
+                <Button value={this.state.comment_content} onClick={this.props.parent.toggleShow}  variant="outline-info">Comment</Button>
               </InputGroup.Append>
           </InputGroup>        
       </div>

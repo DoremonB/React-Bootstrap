@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Toast,Card,Button,Form,Row,Col, Container,Image,Tabs,Tab,Badge,Alert,Accordion,InputGroup,FormControl } from 'react-bootstrap';
+import { Toast,Card,Button,Form,Row,Col, Container,Modal,Image,Tabs,Tab,Badge,Alert,Accordion,InputGroup,FormControl } from 'react-bootstrap';
 import AlertComponent from './AlertComponent'
 import AccordionComponent from './AccordionComponent'
 import BadgeComponent from './BadgeComponent'
@@ -11,43 +11,97 @@ import CardComponent from './CardComponent'
 
 import nature from '../images/nature.jpeg'
 import TimelineInsideProfile from './TimelineInsideProfile'
+import Friend from './Friend'
+import MyFilteringComponent from './MyFilteringComponent'
 
 class Home extends React.Component {
   constructor(props){
     super(props)
     this.state={
       comment_content:'',
-      show:false
+      show:false,
+      showModal:false,
+      ToastContent:''
     }
     this.handleComment=this.handleComment.bind(this)
+    this.toggleShow=this.toggleShow.bind(this)
+    this.showModalFun=this.showModalFun.bind(this)
+    
 
   }
+  toggleShow(e){
+    let x=e.target.value
+    console.log("from child "+x)
+    this.setState((prevState) => ({
+      show: !prevState.show,
+      ToastContent:x
+    }));
+    
+  }
+  
+  showModalFun(e){
+    this.setState((prevState) => ({
+      showModal: true
+    }));
+    console.log(this.state.show)
+  }
+  
   handleComment(e){
+    
     this.setState({
-      comment_content:e.target.value,
+      ToastContent:this.state.ToastContent,
       show:true
     })
-    console.log(e.target.value)
+    
 
   }
   render() {
+    const countries =
+    [
+        "Afghanistan",
+        "Åland Islands",
+        "Albania",
+        "Algeria"
+    ];
+
     return (
       <>
-{this.state.show && 
-<div
-style={{
-  position:'fixed',
-  top:0,
-  width:'100%'
-}}
+      {/* <MyFilteringComponent style={{position:'absolute'}} content={countries} /> */}
+{/* {this.state.show && <div
+  aria-live="polite"
+  aria-atomic="true"
+  style={{
+    position:'fixed',
+    width:'100%',
+    height:'100px',
+    backgroundColor:'transparent',
+    // marginRight:'-25%',
+    top:'0px',
+    right:'0px',
+    // left:'60%',
+    zIndex:'1000'
+  }}
 >
+  <div
+    style={{
+      position: 'absolute',
+      top: 0,
+      right: '1rem',
+    }}
+  > 
 <Alert dismissible variant="success" onClose={()=>{ this.setState({ show:false }) }}>
-    You Added a Comment !
+    You Added a Comment(Alert) !
     <Alert.Link href="#">an example link</Alert.Link>. Give it a click if you
     like.
 </Alert>
 </div>      
-}
+</div>} */}
+
+
+
+
+
+
 
 {/* Toast         */}
 <div
@@ -55,54 +109,90 @@ style={{
   aria-atomic="true"
   style={{
     position:'fixed',
-    width:'50%',
+    width:'100%',
     height:'100px',
-    backgroundColor:'#FFFFFF',
-    marginRight:'-25%',
+    backgroundColor:'transparent',
+    // marginRight:'-25%',
     bottom:'0px',
-    left:'50%',
+    right:'0px',
+    // left:'60%',
+    zIndex:'999'
   }}
 >
   <div
     style={{
-      position: 'sticky',
       position: 'absolute',
-      backgroundColor:'#000000',
+      
       top: 0,
       right: '1rem',
     }}
   > 
-    <Toast>
+    <Toast  onClose={()=>{ this.setState({ show:false }) }} show={this.state.show} delay={3000} autohide>
       <Toast.Header>
         
         <strong className="mr-auto">Bootstrap</strong>
         <small>2 seconds ago</small>
       </Toast.Header>
-      <Toast.Body>Added Comment Successfully</Toast.Body>
+  <Toast.Body>{this.state.ToastContent}</Toast.Body>
     </Toast>
   </div>
 </div>
-{/* Toast end */}      
+{/* Toast end */}     
+
+
+
+
+{/* Modal  */}
+<Modal show={this.state.showModal} onHide={()=>{this.setState({ showModal:false })}}>
+        <Modal.Header closeButton>
+          <Modal.Title>Status Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to upload the status?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={()=>{this.setState({ showModal:false })}}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={()=>{this.setState({ showModal:false })}}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+{/* Modal end */}
+
+
+
+
+
+
+
+
         <Container >
-          <Row className="mb-3">
+          
+          <Row >
                 <Col sm={12}>
                   <Image style={{height:'300px',width:'100%'}} src={nature} fluid thumbnail/>
+                  <Image style={{height:'auto',width:'200px',position:'absolute',top:'230px',left:'30px',zIndex:'999'}} src={nature} roundedCircle fluid thumbnail/>
                 </Col>
+                
           </Row>
           
-          <Row>
+          
+          <Row className="mt-3">
 
             {/* left side */}
+            
 
             <Col className="border border-primary" sm={3}>
+            
               
               {/* row1 of left side */}
-              <Row className="mt-2">
+              <div style={{marginTop:"50px"}}>
+              <Row  className="mt-2">
                 <Col>
                   
                   <Card style={{ width: '100%',height:'auto' }}>
                     
-                    <Image style={{height:'auto',width:'100%'}} src={nature} fluid thumbnail/>
+                    {/* <Image style={{height:'auto',width:'100%'}} src={nature} roundedCircle fluid thumbnail/> */}
                     <Card.Body className="text-left">
                       <Card.Title className="text-center">My Username</Card.Title>
                       <Card.Text>
@@ -114,6 +204,7 @@ style={{
                   </Card>   
                 </Col>
               </Row>
+              </div>
 
               {/* Column2 of left side ...consists of 2x2 grid of photos*/}
               <Row>
@@ -122,8 +213,8 @@ style={{
                     {[1,2].map((num)=>{
                       return(
                         <Row>
-                          <Col sm={6}><Image style={{height:'auto',width:'100%'}} src={nature} fluid thumbnail/></Col>
-                          <Col sm={6}><Image style={{height:'auto',width:'100%'}} src={nature} fluid thumbnail/></Col> 
+                          <Col onClick={()=>{ this.setState({ showModal:true }) }} sm={6}><Image style={{height:'auto',width:'100%'}} src={nature} fluid thumbnail/></Col>
+                          <Col onClick={()=>{ this.setState({ showModal:true }) }} sm={6}><Image style={{height:'auto',width:'100%'}} src={nature} fluid thumbnail/></Col> 
                         </Row>
                       )
                     })}
@@ -141,19 +232,23 @@ style={{
 
             <Col className="border border-primary" sm={9}>
 
+{/* Tab layout */}
+
 <Tabs defaultActiveKey="Timeline" id="uncontrolled-tab-example">
   <Tab eventKey="Timeline" title="Timeline">
-  <TimelineInsideProfile/>
+  <TimelineInsideProfile parent={this}/>
   
   </Tab>
   <Tab eventKey="MyTimeline" title="MyTimeline">
-  <TimelineInsideProfile/>
+  <TimelineInsideProfile parent={this} />
 
   </Tab>
-  <Tab eventKey="contact" title="Contact">
-  <AlertComponent/>
+  <Tab eventKey="Friends" title="Friends">
+  <Friend/>
   </Tab>
-</Tabs>              
+</Tabs>    
+
+{/* Tab layout end */}
             
             {/* <div className="p-5">
 
